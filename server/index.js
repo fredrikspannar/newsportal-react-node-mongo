@@ -1,24 +1,23 @@
-import express from "express";
+import app from "./app.js";
+import mongoose from "mongoose";
+
 import * as dotenv from "dotenv";
 dotenv.config();
 
-
-import authRoute from "./routes/auth.js";
-
-
-const app = express();
+const mongoDB_URL = process.env.NODE_MONGODB;
 const PORT = process.env.PORT || 5000;
 
+mongoose.connect(mongoDB_URL, { useNewUrlParser: true })
+    .then(()=>{
+        console.log(`Connected to MongoDB`);
 
-app.use(express.json());
-app.use(authRoute);
+        // start server
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
 
-
-// default to 404 not found
-app.use((req, res) => {
-    res.status(404).send();
-});
-
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
+    })
+    .catch((err) => {
+        console.log('Failed to connect to MongoDB: ',err);
+        process.exit(1);
+    });
