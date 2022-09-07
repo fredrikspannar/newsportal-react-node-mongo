@@ -39,27 +39,27 @@ const Login = ( { handleLogIn } ) => {
                 credentials: "include",
                 body: JSON.stringify(postData) }
             )
-            .then((response) => {
-                if ( response.ok ) {
-                    return response.json();
-                } else {
-                    throw new Error(response.status + ' ' + response.statusText);
-                }
-            })
+            .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, statusText: r.statusText, body: data})) ) // package status and json body into return result
             .then((data) => {
 
-                if ( data.result === "error" && data.message ) {
-                    setAlertError(data.message);
+                if ( !data.ok && data.body.result === "error" && data.body.message ) {
+                    // error from backend
+                    setAlertError(data.body.message);
 
                     dispatchEmail( { type: TEXTFIELD_RESET } );
                     dispatchPassword( { type: TEXTFIELD_RESET } );
 
                     setTimeout(() => setAlertError(false), 5000);
-                } else {
+
+                } else if ( data.ok && data.body.user ) {
 
                     // login successful
-                    handleLogIn(data.user);
+                    handleLogIn(data.body.user);
                     navigate('/');
+
+                } else {
+                    // general error
+                    throw new Error(`Failed to login! ${data.status} ${data.statusText}`);
                 }
 
             })
