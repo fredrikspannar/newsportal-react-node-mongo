@@ -5,7 +5,7 @@ import articleModel from "../models/articleModel.js";
 
 const Router = express.Router();
 
-Router.get('/articles', async(req,res) => {
+Router.get('/api/articles', async(req,res) => {
 
     const numArticles = await articleModel.countDocuments({}).exec();
 

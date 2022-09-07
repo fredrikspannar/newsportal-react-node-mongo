@@ -9,7 +9,7 @@ import { hasValidFields } from "./../utils/common.js";
 
 
 
-Router.post("/login", (req, res) => {
+Router.post("/api/login", (req, res) => {
     const requiredFields = [ "email", "password" ];
     const isValid = hasValidFields(requiredFields, req.body);
 
@@ -51,7 +51,7 @@ Router.post("/login", (req, res) => {
 
 });
 
-Router.post("/register", (req, res) => {
+Router.post("/api/register", (req, res) => {
     const requiredFields = [ "firstname", "lastname", "email", "password" ];
     const isValid = hasValidFields(requiredFields, req.body);
 
