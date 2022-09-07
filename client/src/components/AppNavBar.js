@@ -2,32 +2,32 @@ import React from 'react';
 
 import { 
             AppBar, Box, Toolbar,
-            Typography, Button, IconButton
+            Typography, Button
         } from '@mui/material';
 
-import MenuIcon from '@mui/icons-material/Menu';
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import { useNavigate } from "react-router-dom";
 
-const AppNavBar = () => {
+import { UserBar } from "./UserBar";
+
+const AppNavBar = ({user}) => {
     const navigate = useNavigate();
 
     return (
       <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Typography variant="h6" component="div">
+            <DynamicFeedIcon />
+          </Typography>
+
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Home
           </Typography>
-          <Button color="inherit" onClick={() => navigate('/login') }>Login</Button>
+          {user.isAuthenticated 
+            ? <UserBar user={user} />
+            : <Button color="inherit" onClick={() => navigate('/login') }>Login</Button>
+          }
         </Toolbar>
       </AppBar>
       </Box>

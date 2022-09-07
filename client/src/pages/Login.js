@@ -1,9 +1,10 @@
 import React, { useReducer, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 import { 
     TextField, Grid,
     Box, Button, Alert 
 } from '@mui/material';
-
 import { styled } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
 
@@ -17,10 +18,11 @@ const SubmitButton = styled(Button)`
     &:disabled { border: 0; }
 `;
 
-const Login = () => {
+const Login = ( { handleLogIn } ) => {
     const [ email, dispatchEmail ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
     const [ password, dispatchPassword ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
     const [ alertError, setAlertError ] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogin = () => {
         dispatchEmail( { type: TEXTFIELD_DISABLED } );
@@ -46,8 +48,6 @@ const Login = () => {
             })
             .then((data) => {
 
-                console.log(data);
-
                 if ( data.result === "error" && data.message ) {
                     setAlertError(data.message);
 
@@ -58,7 +58,8 @@ const Login = () => {
                 } else {
 
                     // login successful
-
+                    handleLogIn(data.user);
+                    navigate('/');
                 }
 
             })
