@@ -1,22 +1,32 @@
 
 export const TEXTFIELD_SET = "TEXTFIELD_SET";
 export const TEXTFIELD_ERROR = "TEXTFIELD_ERROR";
+export const TEXTFIELD_DISABLED = "TEXTFIELD_DISABLED";
 
 export const TextFieldValidationReducer = (state, action) => {
     switch(action.type) {
+        case TEXTFIELD_DISABLED:
+            return {
+                ...state,
+
+                disabled: true
+            }
+
         case TEXTFIELD_SET:
             return {
                 ...state,
 
                 data: action.payload,
-                error: false
+                error: false,
+                disabled: false
             }
 
         case TEXTFIELD_ERROR:
                 return {
                     ...state,
     
-                    error: action.payload
+                    error: action.payload,
+                    disabled: false
                 }
 
         default:
