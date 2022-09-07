@@ -1,13 +1,14 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import { 
-    TextField, Grid, Box, Button
+    TextField, Grid,
+    Box, Button, Alert 
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
 
 import * as EmailValidator from 'email-validator';
-import { TextFieldValidationReducer, TEXTFIELD_SET, TEXTFIELD_ERROR, TEXTFIELD_DISABLED } from "../reducers/TextFieldValidationReducer";
+import { TextFieldValidationReducer, TEXTFIELD_SET, TEXTFIELD_ERROR, TEXTFIELD_DISABLED, TEXTFIELD_RESET } from "../reducers/TextFieldValidationReducer";
 
 const SubmitButton = styled(Button)`
     margin-top: 12px;
@@ -19,13 +20,56 @@ const SubmitButton = styled(Button)`
 const Login = () => {
     const [ email, dispatchEmail ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
     const [ password, dispatchPassword ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
+    const [ alertError, setAlertError ] = useState(false);
 
     const handleLogin = () => {
         dispatchEmail( { type: TEXTFIELD_DISABLED } );
         dispatchPassword( { type: TEXTFIELD_DISABLED } );
 
+        const postData = {
+            email: email.data,
+            password: password.data
+        }
 
+        fetch('/api/login', { 
+                method: "post",
+                headers: [ ["Content-Type", "application/json"] ],
+                credentials: "include",
+                body: JSON.stringify(postData) }
+            )
+            .then((response) => {
+                if ( response.ok ) {
+                    return response.json();
+                } else {
+                    throw new Error(response.status + ' ' + response.statusText);
+                }
+            })
+            .then((data) => {
 
+                console.log(data);
+
+                if ( data.result === "error" && data.message ) {
+                    setAlertError(data.message);
+
+                    dispatchEmail( { type: TEXTFIELD_RESET } );
+                    dispatchPassword( { type: TEXTFIELD_RESET } );
+
+                    setTimeout(() => setAlertError(false), 5000);
+                } else {
+
+                    // login successful
+
+                }
+
+            })
+            .catch((error) => {
+                setAlertError(error.message);
+
+                dispatchEmail( { type: TEXTFIELD_RESET } );
+                dispatchPassword( { type: TEXTFIELD_RESET } );
+
+                setTimeout(() => setAlertError(false), 5000);
+            });     
 
     }
 
@@ -52,6 +96,7 @@ const Login = () => {
     return (
         <Box>
             <h1>Login</h1>
+            {alertError !== false && <><Alert severity="error">{alertError}</Alert><br /></> }
             <Grid container spacing={2}>
                 <Grid item>
                     <TextField id="email" label="E-mail" variant="standard" disabled={email.disabled !== false} error={email.error !== false} helperText={email.error !== false ? email.error : ''} onBlur={(e) => handleEmailInputBlur(e)} />
