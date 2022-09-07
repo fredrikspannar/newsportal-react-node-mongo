@@ -1,7 +1,7 @@
 import FaceIcon from '@mui/icons-material/Face';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import { Button, Menu, MenuItem } from '@mui/material';
+import { Button, Menu, MenuItem, IconButton } from '@mui/material';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,11 +21,13 @@ export const UserBar = ({user}) => {
 
     return (
         <>
-            <FaceIcon /> &nbsp; &nbsp;
+            <IconButton color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+                <FaceIcon />
+            </IconButton>
             {user.firstname} {user.lastname}
 
             <Button onClick={handleClick}><ArrowDropDownIcon style={{ color: "#fff"}} /></Button>
-            <Menu open={open} onClose={handleClose} anchorEl={anchorEl} anchorOrigin={{vertical: 'center',horizontal: 'left'}} style={{marginLeft:"-40px", marginTop: "4px"}}>
+            <Menu open={open} onClose={handleClose} anchorEl={anchorEl} anchorOrigin={{vertical: 'center',horizontal: 'left'}} >
                 <MenuItem onClick={() => navigate('/profile') }>Profile</MenuItem>
                 <MenuItem onClick={() => navigate('/logout') }>Logout</MenuItem>
             </Menu>            

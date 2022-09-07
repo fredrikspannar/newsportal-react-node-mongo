@@ -1,14 +1,17 @@
 import React from 'react';
 
-import { 
-            AppBar, Box, Toolbar,
-            Typography, Button
-        } from '@mui/material';
-
+import { AppBar, Box, Toolbar,Typography, Button, IconButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 import { UserBar } from "./UserBar";
+
+const StyledNavLink = styled(NavLink)`
+  color: #fff;
+  text-decoration:none;
+  &:hover { color:#aaa; }
+`;
 
 const AppNavBar = ({user}) => {
     const navigate = useNavigate();
@@ -17,13 +20,14 @@ const AppNavBar = ({user}) => {
       <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" component="div">
+          <IconButton color="inherit" aria-label="menu" sx={{ mr: 2 }}>
             <DynamicFeedIcon />
-          </Typography>
+          </IconButton>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Home
+            <StyledNavLink to="/">Home</StyledNavLink>
           </Typography>
+
           {user.isAuthenticated 
             ? <UserBar user={user} />
             : <Button color="inherit" onClick={() => navigate('/login') }>Login</Button>
