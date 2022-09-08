@@ -13,7 +13,7 @@ const StyledNavLink = styled(NavLink)`
   &:hover { color:#aaa; }
 `;
 
-const AppNavBar = ({user}) => {
+const AppNavBar = ({user, isAuthenticated}) => {
     const navigate = useNavigate();
 
     return (
@@ -28,7 +28,7 @@ const AppNavBar = ({user}) => {
             <StyledNavLink to="/">Home</StyledNavLink>
           </Typography>
 
-          {user.isAuthenticated 
+          {isAuthenticated 
             ? <UserBar user={user} />
             : <Button color="inherit" onClick={() => navigate('/login') }>Login</Button>
           }

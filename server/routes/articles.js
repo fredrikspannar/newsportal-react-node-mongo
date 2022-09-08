@@ -3,9 +3,11 @@ import fetch from 'node-fetch';
 
 import articleModel from "../models/articleModel.js";
 
+import requireAuthorized from "../middleware/requireAuthorized.js";
+
 const Router = express.Router();
 
-Router.get('/api/articles', async(req,res) => {
+Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
     const numArticles = await articleModel.countDocuments({}).exec();
 

@@ -5,15 +5,12 @@ export const AUTH_LOGOUT = "AUTH_LOGOUT";
 export const AuthReducer = (state, action) => {
     switch(action.type) {
         case AUTH_LOGIN:
-            return {          
-                isAuthenticated: true,
+            return {         
                 ...action.payload
             }
             
         case AUTH_LOGOUT:
-            return {
-                isAuthenticated: false
-            }
+            return { }
 
         default:
             return state;

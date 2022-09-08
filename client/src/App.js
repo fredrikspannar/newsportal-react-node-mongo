@@ -13,7 +13,8 @@ import { AuthReducer, AUTH_LOGIN } from "./reducers/AuthReducer";
 
 
 function App() {
-  const [ auth, dispatchAuth ] = useReducer(AuthReducer, { isAuthenticated: false } );
+  const isAuthenticated = sessionStorage.getItem('isAuthenticated') || false;
+  const [ auth, dispatchAuth ] = useReducer(AuthReducer, { } );
   const [ message, setMessage ] = useState(false);
 
   const handleLogIn = (userData) => {
@@ -21,15 +22,16 @@ function App() {
     dispatchAuth( { type: AUTH_LOGIN, payload: userData } );
 
     setMessage({type:"success", message:"You have logged in!"});
+    sessionStorage.setItem('isAuthenticated',true);
   }
 
   return (
     <Router>
       <Container maxWidth="xl">
-        <AppNavBar user={auth} />
+        <AppNavBar user={auth} isAuthenticated={isAuthenticated} />
 
         <Routes>
-          <Route path="/" index element={auth.isAuthenticated === false ? <Navigate replace to="/login" /> : <Home message={message} />} />
+          <Route path="/" index element={isAuthenticated === false ? <Navigate replace to="/login" /> : <Home message={message} />} />
           <Route path="/login" element={<Login handleLogIn={handleLogIn} />} />
 
           { /* .. when all route matches fail */}

@@ -29,7 +29,8 @@ Router.post("/api/login", (req, res) => {
             } else {
                 // get first result and convert to JSON
                 user = user[0].toJSON();
-
+                delete user.password;
+                
                 // create login-token
                 const token = jwt.sign(user, process.env.SECRET);
 
@@ -38,7 +39,6 @@ Router.post("/api/login", (req, res) => {
                     httpOnly: true
                 });
             
-                delete user.password;
                 res.json({ "result": "success", "user": user });
             }
 
