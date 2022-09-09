@@ -2,6 +2,7 @@ import express from "express";
 import md5 from "md5";
 import jwt from "jsonwebtoken";
 import authModel from "../models/authModel.js";
+import tokenModel from "../models/tokenModel.js";
 
 const Router = express.Router();
 
@@ -34,12 +35,27 @@ Router.post("/api/login", (req, res) => {
                 // create login-token
                 const token = jwt.sign(user, process.env.SECRET);
 
-                // set http-only cookie
-                res.cookie('token', token, {
-                    httpOnly: true
-                });
-            
-                res.json({ "result": "success", "user": user });
+                // save token to mongo
+                let tokenDB = new tokenModel();
+                tokenDB.token = token;
+                tokenDB.userId = user._id;
+
+                tokenDB.save()
+                    .then((tokenDBCreated) => {
+                        // all done, login complete
+                        
+                        // set http-only cookie
+                        res.cookie('token', token, {
+                            httpOnly: true
+                        });
+                    
+                        res.json({ "result": "success", "user": user });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        res.status(500).json(error);
+                    });
+
             }
 
         })

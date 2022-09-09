@@ -1,5 +1,6 @@
 import express from "express";
 import fetch from 'node-fetch';
+import slugify  from "slugify";
 
 import articleModel from "../models/articleModel.js";
 
@@ -31,6 +32,7 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
                             article.title = item.title;
                             article.description = item.description;
                             article.url = item.url;
+                            article.slug = slugify(`${item.source.name}-${item.title}-${item.publishedAt.toLocaleString('sv-SE')}`, {lower: true});
                             article.urlToImage = item.urlToImage;
                             article.publishedAt = item.publishedAt;
                             article.content = item.content;

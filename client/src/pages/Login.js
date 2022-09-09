@@ -2,8 +2,8 @@ import React, { useReducer, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { 
-    TextField, Grid,
-    Box, Button, Alert 
+    TextField, Grid, Paper,
+    Box, Button, Alert, Snackbar
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
@@ -18,6 +18,13 @@ const SubmitButton = styled(Button)`
     &:disabled { border: 0; }
 `;
 
+const Item = styled(Paper)`
+    display: block;
+    margin-top: 6px;
+    border: 0;
+    box-shadow: none;
+`;
+
 const Login = ( { handleLogIn } ) => {
     const [ email, dispatchEmail ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
     const [ password, dispatchPassword ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
@@ -25,6 +32,14 @@ const Login = ( { handleLogIn } ) => {
     const navigate = useNavigate();
 
     const handleLogin = () => {
+        if ( email.data.length === 0 ) {
+            dispatchEmail( { type: TEXTFIELD_ERROR, payload: "This field is required!" } );
+            return;
+        } else if ( password.data.length === 0 ) {
+            dispatchPassword( { type: TEXTFIELD_ERROR, payload: "This field is required!" } );
+            return;
+        }
+
         dispatchEmail( { type: TEXTFIELD_DISABLED } );
         dispatchPassword( { type: TEXTFIELD_DISABLED } );
 
@@ -96,20 +111,20 @@ const Login = ( { handleLogIn } ) => {
 
     return (
         <Box>
-            <h1>Login</h1>
-            {alertError !== false && <><Alert severity="error">{alertError}</Alert><br /></> }
-            <Grid container spacing={2}>
-                <Grid item>
-                    <TextField id="email" label="E-mail" variant="standard" disabled={email.disabled !== false} error={email.error !== false} helperText={email.error !== false ? email.error : ''} onBlur={(e) => handleEmailInputBlur(e)} />
-                </Grid>
-                <Grid item>
-                    <TextField id="password" label="Password" variant="standard" disabled={password.disabled !== false} error={password.error !== false} helperText={password.error !== false ? password.error : ''} onBlur={(e) => handlePasswordInputBlur(e)} />
-                </Grid>
-                <Grid item>
-                    {email.disabled !== false && password.disabled !== false 
+            {alertError !== false && 
+                <Snackbar open={alertError !== false} anchorOrigin={{ vertical:"top", horizontal:"right"}} autoHideDuration={7500} onClose={() => setAlertError(false)}>
+                    <Alert onClose={() => setAlertError(false)} severity="error" sx={{ width: '100%' }}>{alertError}</Alert>
+                </Snackbar>
+            }
+            <Grid container spacing={2}  alignItems="center" justifyContent="center">
+                <Grid item xs={3}>
+                    <Item><h1>Login</h1></Item>
+                    <Item><TextField id="email" label="E-mail" variant="standard" disabled={email.disabled !== false} error={email.error !== false} helperText={email.error !== false ? email.error : ''} onBlur={(e) => handleEmailInputBlur(e)} /></Item>
+                    <Item><TextField id="password" label="Password" variant="standard" disabled={password.disabled !== false} error={password.error !== false} helperText={password.error !== false ? password.error : ''} onBlur={(e) => handlePasswordInputBlur(e)} /></Item>
+                    <Item>{email.disabled !== false && password.disabled !== false 
                         ? <CircularProgress size="1.2rem" style={{ top: "26px", position: "relative" }} />
                         : <SubmitButton color="success" onClick={handleLogin}>Continue</SubmitButton>
-                    }
+                    }</Item>
                 </Grid>
             </Grid>
         </Box>

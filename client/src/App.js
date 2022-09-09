@@ -16,19 +16,35 @@ function App() {
   const isAuthenticated = sessionStorage.getItem('isAuthenticated') || false;
   const [ auth, dispatchAuth ] = useReducer(AuthReducer, { } );
   const [ message, setMessage ] = useState(false);
+  let user = auth;
 
   const handleLogIn = (userData) => {
     delete userData.__v;
+    delete userData._id;
+    delete userData.createdAt;
+    delete userData.email;
+
     dispatchAuth( { type: AUTH_LOGIN, payload: userData } );
 
+    // feedback after login
     setMessage({type:"success", message:"You have logged in!"});
     sessionStorage.setItem('isAuthenticated',true);
+
+    // store user name for display purpose
+    userData = JSON.stringify(userData); // needs to be encoded before sessionStorage
+    sessionStorage.setItem('userData',userData);
+  }
+
+  // empty user data? get name from store for display purpose
+  if ( isAuthenticated && !user.firstname ) {
+    user = sessionStorage.getItem('userData');
+    user = JSON.parse(user);
   }
 
   return (
     <Router>
       <Container maxWidth="xl">
-        <AppNavBar user={auth} isAuthenticated={isAuthenticated} />
+        <AppNavBar user={user} isAuthenticated={isAuthenticated} />
 
         <Routes>
           <Route path="/" index element={isAuthenticated === false ? <Navigate replace to="/login" /> : <Home message={message} />} />

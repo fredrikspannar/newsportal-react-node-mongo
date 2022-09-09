@@ -3,7 +3,7 @@ import React from 'react';
 import { AppBar, Box, Toolbar,Typography, Button, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, useLocation } from "react-router-dom";
 
 import { UserBar } from "./UserBar";
 
@@ -15,6 +15,15 @@ const StyledNavLink = styled(NavLink)`
 
 const AppNavBar = ({user, isAuthenticated}) => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    console.log(`AppNavBar location.pathname = ${location.pathname}, isAuthenticated = ${isAuthenticated}, user =`,user);
+
+    /*if ( isAuthenticated === false && location.pathname !== "/login" ) {
+      console.log('AppNavBar redirect to /login');
+      navigate('/login');
+      return;
+    }*/
 
     return (
       <Box sx={{ flexGrow: 1 }}>
@@ -30,7 +39,7 @@ const AppNavBar = ({user, isAuthenticated}) => {
 
           {isAuthenticated 
             ? <UserBar user={user} />
-            : <Button color="inherit" onClick={() => navigate('/login') }>Login</Button>
+            : location.pathname !== "/login" && <Button color="inherit" onClick={() => navigate('/login') }>Login</Button>
           }
         </Toolbar>
       </AppBar>

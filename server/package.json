@@ -12,7 +12,8 @@
     "md5": "^2.3.0",
     "mongodb": "^4.9.1",
     "mongoose": "^6.5.4",
-    "node-fetch": "^3.2.10"
+    "node-fetch": "^3.2.10",
+    "slugify": "^1.6.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
