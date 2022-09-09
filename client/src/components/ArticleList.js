@@ -1,5 +1,5 @@
 import { useReducer, useEffect } from 'react';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Grid } from '@mui/material';
 import {ArticleListReducer, ARTICLES_SET, ARTICLES_LOADING, ARTICLES_ERROR } from "../reducers/ArticleListReducer";
 import ArticleListItem from "../components/ArticleListItem";
 
@@ -34,9 +34,13 @@ const ArticleList = () => {
 
     return (
         <>
-            {articles.isLoading ? <CircularProgress /> :
-                (articles.error !== false ? <p>Failed to load articles: {articles.error}</p>  : articles.data.map((item, index) => <ArticleListItem key={index} item={item} />)
-            )}
+            <Grid container spacing={2}>
+              {articles.isLoading ? <CircularProgress /> :
+                (articles.error !== false 
+                    ? <p>Failed to load articles: {articles.error}</p>  
+                    : articles.data.map((item, index) => <ArticleListItem key={index} item={item} /> )
+              )}
+            </Grid>
         </>
     );
 };
