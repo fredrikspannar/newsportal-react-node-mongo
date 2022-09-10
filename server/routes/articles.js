@@ -8,6 +8,7 @@ import requireAuthorized from "../middleware/requireAuthorized.js";
 
 const Router = express.Router();
 
+
 Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
     const numArticles = await articleModel.countDocuments({}).exec();
@@ -26,13 +27,14 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
                     result.articles.map((item) => {
 
                         try {
+                            let slugName = `${item.source.name}-${item.title}-` + item.publishedAt.toLocaleString('sv-SE');
                             let article = new articleModel();
                             article.sourceName = item.source.name;
                             article.author = item.author;
                             article.title = item.title;
                             article.description = item.description;
                             article.url = item.url;
-                            article.slug = slugify(`${item.source.name}-${item.title}-${item.publishedAt.toLocaleString('sv-SE')}`, {lower: true});
+                            article.slug = slugify(slugName, {lower: true, strict: true, trim: true});
                             article.urlToImage = item.urlToImage;
                             article.publishedAt = item.publishedAt;
                             article.content = item.content;
@@ -50,9 +52,15 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
                     });
 
-                    // cached until next time
-                    res.json(result.articles);
-
+                    // get all  and return data
+                    articleModel.find({})
+                    .then((result) => {
+                        res.send(result);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        res.status(500).json(error);
+                    });
                 })
                 .catch((error) => {
                     console.log(error);
@@ -65,17 +73,19 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
         }
 
     } else {
-   
-        // get all 
+
+        // get all from cache and return data
         articleModel.find({})
-            .then((result) => {
-                res.send(result);
-            })
-            .catch((error) => {
-                console.log(error);
-                res.status(500).json(error);
-            });
+        .then((result) => {
+            res.send(result);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json(error);
+        });
+
     }
+   
 
 });
 

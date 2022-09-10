@@ -7,7 +7,7 @@ import tokenModel from "../models/tokenModel.js";
 const Router = express.Router();
 
 import { hasValidFields } from "./../utils/common.js";
-
+import requireAuthorized from "../middleware/requireAuthorized.js";
 
 
 Router.post("/api/login", (req, res) => {
@@ -64,6 +64,31 @@ Router.post("/api/login", (req, res) => {
             res.status(500).json(error);
         });
 
+
+});
+
+Router.post("/api/logout", requireAuthorized, (req, res) => {
+
+    // delete token from mongo
+    tokenDB.deleteOne({ token: req.cookies.token, userId: req.user._id })
+        .then((deletedCount) => {
+
+            console.log('/api/logout has deletedCount = ',deletedCount);
+
+            if ( deletedCount ) {
+                // clear httponly-cookie
+                res.clearCookie('token');
+                res.status(200).json( { "result": "success" } );
+
+            } else {
+                res.status(500).json({ "result": "error", "message": "Failed to logout" });
+            }
+
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json(error);
+        });
 
 });
 
