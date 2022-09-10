@@ -2,8 +2,7 @@ import React, { useReducer } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { 
-    TextField, Grid, Paper,
-    Box, Button
+    TextField, Grid, Paper, Button
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
@@ -29,7 +28,7 @@ const Item = styled(Paper)`
     box-shadow: none;
 `;
 
-const Login = ( { dispatchAuth } ) => {
+const Login = ( { dispatchAuth, gridSize=3, titleSizeH3=false } ) => {
     const [ email, dispatchEmail ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
     const [ password, dispatchPassword ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
     const [ message, setMessage ] = MessageHook();
@@ -63,12 +62,12 @@ const Login = ( { dispatchAuth } ) => {
 
                 if ( !data.ok && data.body.result === "error" && data.body.message ) {
                     // error from backend
-                    setMessage({"type":"error", "content":data.body.message});
+                    setMessage({type:"error", content:data.body.message});
 
                     dispatchEmail( { type: TEXTFIELD_RESET } );
                     dispatchPassword( { type: TEXTFIELD_RESET } );
 
-                } else if ( data.ok && data.body.user ) {
+                } else if ( data.ok && data.status === 200 && data.body.user ) {
 
                     // login successful
                     let userData = data.body.user;
@@ -81,7 +80,7 @@ const Login = ( { dispatchAuth } ) => {
                     
                 
                     // feedback after login
-                    setMessage({"type":"success", "content":"You have logged in!"});
+                    sessionStorage.setItem('showLoginSuccessfulOnHome',true); // when login from widget on Home this message was not displayed when set in Login component
                     sessionStorage.setItem('isAuthenticated',true);
                 
                     // store user name for display purpose
@@ -97,7 +96,7 @@ const Login = ( { dispatchAuth } ) => {
 
             })
             .catch((error) => {
-                setMessage({"type":"error", "content":error.message});
+                setMessage({type:"error", content:error.message});
 
                 dispatchEmail( { type: TEXTFIELD_RESET } );
                 dispatchPassword( { type: TEXTFIELD_RESET } );
@@ -126,21 +125,23 @@ const Login = ( { dispatchAuth } ) => {
     }
 
     return (
-        <Box>
+        <>
             {message !== false && message}
 
             <Grid container spacing={2}  alignItems="center" justifyContent="center">
-                <Grid item xs={3}>
-                    <Item><h1>Login</h1></Item>
-                    <Item><TextField id="email" label="E-mail" variant="standard" disabled={email.disabled !== false} error={email.error !== false} helperText={email.error !== false ? email.error : ''} onBlur={(e) => handleEmailInputBlur(e)} /></Item>
-                    <Item><TextField id="password" label="Password" variant="standard" disabled={password.disabled !== false} error={password.error !== false} helperText={password.error !== false ? password.error : ''} onBlur={(e) => handlePasswordInputBlur(e)} /></Item>
+                <Grid item xs={gridSize}>
+                    <Item>
+                        {titleSizeH3 ? <h3>Login</h3> : <h1>Login</h1>}
+                    </Item>
+                    <Item><TextField fullWidth id="email" label="E-mail" variant="standard" disabled={email.disabled !== false} error={email.error !== false} helperText={email.error !== false ? email.error : ''} onBlur={(e) => handleEmailInputBlur(e)} /></Item>
+                    <Item><TextField fullWidth type="password" id="password" label="Password" variant="standard" disabled={password.disabled !== false} error={password.error !== false} helperText={password.error !== false ? password.error : ''} onBlur={(e) => handlePasswordInputBlur(e)} /></Item>
                     <Item>{email.disabled !== false && password.disabled !== false 
                         ? <CircularProgress size="1.2rem" style={{ top: "26px", position: "relative" }} />
                         : <SubmitButton color="success" onClick={handleLogin}>Continue</SubmitButton>
                     }</Item>
                 </Grid>
             </Grid>
-        </Box>
+        </>
     );
 
 }

@@ -26,7 +26,7 @@ const Logout = () => {
                     setIsLoggingOut(false);
                     setMessage({"type":"success", "content":"You have successfully logged out!"});
     
-                    navigate("/login");
+                    navigate("/");
     
                 } else if ( data.body.result === "error" && data.body.message ) {
                     // general error

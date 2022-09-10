@@ -8,6 +8,25 @@ import requireAuthorized from "../middleware/requireAuthorized.js";
 
 const Router = express.Router();
 
+Router.get('/api/article/:slug', requireAuthorized, (req,res) => {
+    const { slug } = req.params;
+
+    articleModel.findOne({ slug: slug})
+        .then((result) => {
+
+                if ( result === null ) {
+                    res.status(404).send({});
+                } else {
+                    res.send(result);
+                }
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json(error);
+        });
+
+});
+
 
 Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
@@ -54,13 +73,13 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
                     // get all  and return data
                     articleModel.find({})
-                    .then((result) => {
-                        res.send(result);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        res.status(500).json(error);
-                    });
+                        .then((result) => {
+                            res.send(result);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            res.status(500).json(error);
+                        });
                 })
                 .catch((error) => {
                     console.log(error);
@@ -76,13 +95,13 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
         // get all from cache and return data
         articleModel.find({})
-        .then((result) => {
-            res.send(result);
-        })
-        .catch((error) => {
-            console.log(error);
-            res.status(500).json(error);
-        });
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((error) => {
+                console.log(error);
+                res.status(500).json(error);
+            });
 
     }
    

@@ -7,17 +7,26 @@ import { useNavigate } from "react-router-dom";
 
 export const UserBar = ({user}) => {
     const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
+    let open = Boolean(anchorEl);
+    
+    const navigate = useNavigate();
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
+        // close popup 
+      open = false;
       setAnchorEl(null);
     };
 
-    const navigate = useNavigate();
+    const goToPage = (url) => {
+        // close popup and navigate to target
+        open = false;
+        setAnchorEl(null);
+        navigate(url);
+    }
 
     return (
         <>
@@ -28,8 +37,8 @@ export const UserBar = ({user}) => {
 
             <Button onClick={handleClick}><ArrowDropDownIcon style={{ color: "#fff"}} /></Button>
             <Menu open={open} onClose={handleClose} anchorEl={anchorEl} anchorOrigin={{vertical: 'center',horizontal: 'left'}} >
-                <MenuItem onClick={() => navigate('/profile') }>Profile</MenuItem>
-                <MenuItem onClick={() => navigate('/logout') }>Logout</MenuItem>
+                <MenuItem onClick={() => goToPage('/profile') }>Profile</MenuItem>
+                <MenuItem onClick={() => goToPage('/logout') }>Logout</MenuItem>
             </Menu>            
         </>
     );

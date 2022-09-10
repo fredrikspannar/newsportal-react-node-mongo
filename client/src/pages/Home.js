@@ -1,20 +1,23 @@
 import ArticleList from "../components/ArticleList";
-import { Navigate, useLocation } from "react-router-dom";
-import MessageHook from "../utils/messageHook.js";
+import HomeSplash from "../components/HomeSplash";
 
-const Home = () => {
+import MessageHook from "../utils/messageHook";
+
+const Home = ({dispatchAuth}) => {
     const isAuthenticated = sessionStorage.getItem('isAuthenticated') || false;
-    const [ message ] = MessageHook();
-    let location = useLocation();
+    const showLoginSuccessfulOnHome = sessionStorage.getItem('showLoginSuccessfulOnHome') || false;
+    const [ message, setMessage ] = MessageHook();
 
-    if ( isAuthenticated === false || isAuthenticated === "false" ) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
+    if ( showLoginSuccessfulOnHome ) {
+        // when login from widget on Home this message was not displayed here when set in Login component
+        setMessage({type:"success", content:"You have logged in!"});
+        sessionStorage.removeItem('showLoginSuccessfulOnHome');
     }
 
     return (
         <>
             <h1>Home</h1>
-            <ArticleList />
+            {isAuthenticated ? <ArticleList /> : <HomeSplash dispatchAuth={dispatchAuth} /> }
 
             {message !== false && message}
         </>

@@ -33,8 +33,11 @@ const MessageHook = () => {
     }
 
     if ( message !== false ) {
-        const type = message.type;
-        const content = message.content;
+        let rMessage = message;
+        if ( rMessage.type === undefined ) rMessage = JSON.parse(message);
+
+        const type = rMessage.type;
+        const content = rMessage.content;
 
         // create return JSX
         returnMessage = <Snackbar open={showMessage} anchorOrigin={{ vertical:"top", horizontal:"right"}} autoHideDuration={7500} onClose={() => setShowMessage(false)}>

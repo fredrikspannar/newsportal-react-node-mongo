@@ -6,6 +6,9 @@ import { useReducer } from "react";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
+import Profile from "./pages/Profile";
+import Register from "./pages/Register";
+import SingleArticle from "./pages/SingleArticle";
 import PageNotFound from "./pages/PageNotFound";
 
 import AppNavBar from "./components/AppNavBar";
@@ -30,7 +33,11 @@ function App() {
         <AppNavBar user={user} />
 
         <Routes>
-          <Route path="/" index element={<Home />} />
+          <Route path="/" index element={<Home dispatchAuth={dispatchAuth} />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/article/:slug" element={<SingleArticle />} />
+          
+          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login dispatchAuth={dispatchAuth} />} />
           <Route path="/logout" element={<Logout />} />
 
