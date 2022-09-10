@@ -1,20 +1,22 @@
-import { useState } from 'react';
 import ArticleList from "../components/ArticleList";
-import { Snackbar, Alert } from '@mui/material';
+import { Navigate, useLocation } from "react-router-dom";
+import MessageHook from "../utils/messageHook.js";
 
-const Home = ({message = false}) => {
-    const [ showMessage, setShowMessage ] = useState(message);
+const Home = () => {
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') || false;
+    const [ message ] = MessageHook();
+    let location = useLocation();
+
+    if ( isAuthenticated === false || isAuthenticated === "false" ) {
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
 
     return (
         <>
             <h1>Home</h1>
             <ArticleList />
 
-            {showMessage !== false &&
-                <Snackbar open={showMessage !== false} anchorOrigin={{ vertical:"top", horizontal:"right"}} autoHideDuration={7500} onClose={() => setShowMessage(false)}>
-                    <Alert onClose={() => setShowMessage(false)} severity={showMessage.type} sx={{ width: '100%' }}>{showMessage.message}</Alert>
-                </Snackbar>
-            }
+            {message !== false && message}
         </>
     );
 

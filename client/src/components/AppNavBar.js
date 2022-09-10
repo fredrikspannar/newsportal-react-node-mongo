@@ -13,17 +13,10 @@ const StyledNavLink = styled(NavLink)`
   &:hover { color:#aaa; }
 `;
 
-const AppNavBar = ({user, isAuthenticated}) => {
+const AppNavBar = ({user}) => {
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') || false;
     const navigate = useNavigate();
     const location = useLocation();
-
-    console.log(`AppNavBar location.pathname = ${location.pathname}, isAuthenticated = ${isAuthenticated}, user =`,user);
-
-    /*if ( isAuthenticated === false && location.pathname !== "/login" ) {
-      console.log('AppNavBar redirect to /login');
-      navigate('/login');
-      return;
-    }*/
 
     return (
       <Box sx={{ flexGrow: 1 }}>

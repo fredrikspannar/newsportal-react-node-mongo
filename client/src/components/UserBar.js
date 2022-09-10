@@ -17,11 +17,6 @@ export const UserBar = ({user}) => {
       setAnchorEl(null);
     };
 
-    const handleLogout = () => {
-        sessionStorage.setItem('isAuthenticated',false);
-        sessionStorage.setItem('userData',false);
-      }
-
     const navigate = useNavigate();
 
     return (
@@ -34,7 +29,7 @@ export const UserBar = ({user}) => {
             <Button onClick={handleClick}><ArrowDropDownIcon style={{ color: "#fff"}} /></Button>
             <Menu open={open} onClose={handleClose} anchorEl={anchorEl} anchorOrigin={{vertical: 'center',horizontal: 'left'}} >
                 <MenuItem onClick={() => navigate('/profile') }>Profile</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={() => navigate('/logout') }>Logout</MenuItem>
             </Menu>            
         </>
     );

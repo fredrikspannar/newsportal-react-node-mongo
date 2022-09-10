@@ -70,12 +70,10 @@ Router.post("/api/login", (req, res) => {
 Router.post("/api/logout", requireAuthorized, (req, res) => {
 
     // delete token from mongo
-    tokenDB.deleteOne({ token: req.cookies.token, userId: req.user._id })
-        .then((deletedCount) => {
+    tokenModel.deleteOne({ token: req.cookies.token, userId: req.user._id })
+        .then((result) => {
 
-            console.log('/api/logout has deletedCount = ',deletedCount);
-
-            if ( deletedCount ) {
+            if ( result && result.deletedCount > 0 ) {
                 // clear httponly-cookie
                 res.clearCookie('token');
                 res.status(200).json( { "result": "success" } );

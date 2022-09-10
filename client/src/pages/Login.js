@@ -1,15 +1,19 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { 
     TextField, Grid, Paper,
-    Box, Button, Alert, Snackbar
+    Box, Button
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
 
 import * as EmailValidator from 'email-validator';
 import { TextFieldValidationReducer, TEXTFIELD_SET, TEXTFIELD_ERROR, TEXTFIELD_DISABLED, TEXTFIELD_RESET } from "../reducers/TextFieldValidationReducer";
+
+import { AUTH_LOGIN } from "../reducers/AuthReducer";
+
+import MessageHook from "../utils/messageHook.js";
 
 const SubmitButton = styled(Button)`
     margin-top: 12px;
@@ -25,10 +29,10 @@ const Item = styled(Paper)`
     box-shadow: none;
 `;
 
-const Login = ( { handleLogIn } ) => {
+const Login = ( { dispatchAuth } ) => {
     const [ email, dispatchEmail ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
     const [ password, dispatchPassword ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: "" });
-    const [ alertError, setAlertError ] = useState(false);
+    const [ message, setMessage ] = MessageHook();
     const navigate = useNavigate();
 
     const handleLogin = () => {
@@ -59,17 +63,31 @@ const Login = ( { handleLogIn } ) => {
 
                 if ( !data.ok && data.body.result === "error" && data.body.message ) {
                     // error from backend
-                    setAlertError(data.body.message);
+                    setMessage({"type":"error", "content":data.body.message});
 
                     dispatchEmail( { type: TEXTFIELD_RESET } );
                     dispatchPassword( { type: TEXTFIELD_RESET } );
 
-                    setTimeout(() => setAlertError(false), 5000);
-
                 } else if ( data.ok && data.body.user ) {
 
                     // login successful
-                    handleLogIn(data.body.user);
+                    let userData = data.body.user;
+                    delete userData.__v;
+                    delete userData._id;
+                    delete userData.createdAt;
+                    delete userData.email;
+                
+                    dispatchAuth( { type: AUTH_LOGIN, payload: userData } );
+                    
+                
+                    // feedback after login
+                    setMessage({"type":"success", "content":"You have logged in!"});
+                    sessionStorage.setItem('isAuthenticated',true);
+                
+                    // store user name for display purpose
+                    userData = JSON.stringify(userData); // needs to be encoded before sessionStorage
+                    sessionStorage.setItem('userData',userData);
+
                     navigate('/');
 
                 } else {
@@ -79,12 +97,10 @@ const Login = ( { handleLogIn } ) => {
 
             })
             .catch((error) => {
-                setAlertError(error.message);
+                setMessage({"type":"error", "content":error.message});
 
                 dispatchEmail( { type: TEXTFIELD_RESET } );
                 dispatchPassword( { type: TEXTFIELD_RESET } );
-
-                setTimeout(() => setAlertError(false), 5000);
             });     
 
     }
@@ -111,11 +127,8 @@ const Login = ( { handleLogIn } ) => {
 
     return (
         <Box>
-            {alertError !== false && 
-                <Snackbar open={alertError !== false} anchorOrigin={{ vertical:"top", horizontal:"right"}} autoHideDuration={7500} onClose={() => setAlertError(false)}>
-                    <Alert onClose={() => setAlertError(false)} severity="error" sx={{ width: '100%' }}>{alertError}</Alert>
-                </Snackbar>
-            }
+            {message !== false && message}
+
             <Grid container spacing={2}  alignItems="center" justifyContent="center">
                 <Grid item xs={3}>
                     <Item><h1>Login</h1></Item>
