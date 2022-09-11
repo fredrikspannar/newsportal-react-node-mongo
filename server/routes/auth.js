@@ -107,6 +107,7 @@ Router.post("/api/register", (req, res) => {
     user.lastname = lastname;
     user.email = email;
     user.password = md5(password);
+    user.categories = ["entertainment", "technology"];
 
     // first check if user exists
     authModel.find({ "email": email})

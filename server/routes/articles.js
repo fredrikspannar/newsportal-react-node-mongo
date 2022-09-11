@@ -101,10 +101,12 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 Router.get('/api/articles-by-name/:name', requireAuthorized, (req,res) => {
     const { name } = req.params;
 
-    // get all from cache and return data
-    articleModel.find( { category : name.toLowerCase() } )
-        .then((result) => {
+    // name can be comma-separated list ( sent with + as replacement for , )
+    let query = { category : name.toLowerCase().replace('+', ',').split(',') };
 
+    // get all from cache and return data
+    articleModel.find( query )
+        .then((result) => {
             res.send(result);
         })
         .catch((error) => {

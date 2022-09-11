@@ -17,6 +17,7 @@ const authSchema = new mongoose.Schema({
         type: String,
         required: true,
     },     
+    categories: [String],
     createdAt: {
         type: Date,
         default: () => Date.now(),

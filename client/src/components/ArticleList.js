@@ -1,15 +1,20 @@
 import { useReducer, useEffect } from 'react';
-import { CircularProgress, Grid } from '@mui/material';
+import { CircularProgress, Grid, Button } from '@mui/material';
 import {ArticleListReducer, ARTICLES_SET, ARTICLES_LOADING, ARTICLES_ERROR } from "../reducers/ArticleListReducer";
 import ArticleListItem from "../components/ArticleListItem";
+import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 
 const ArticleList = () => {
+    const userCategories = sessionStorage.getItem('userCategories') || false;
     const [ articles, dispatchArticles ] = useReducer(ArticleListReducer, { data: [ ], isLoading: true, error: false });
 
     useEffect(() => {
         dispatchArticles( { type: ARTICLES_LOADING } );
 
-        fetch('/api/articles', {credentials: "include"})
+        let url = '/api/articles';
+        if ( userCategories !== false ) url = `/api/articles-by-name/${userCategories.replace(' ','').replace(',','+')}`
+
+        fetch(url, {credentials: "include"})
         .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, statusText: r.statusText, body: data})) ) // package status and json body into return result
             .then((data) => {
 
@@ -29,11 +34,19 @@ const ArticleList = () => {
 
                 dispatchArticles( { type: ARTICLES_ERROR, payload: error.message } );
             });
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
+
+    let formattedUserCategories = false;
+    if ( userCategories !== false ) {
+        formattedUserCategories = [];
+        const uCats = userCategories.split(',')
+        formattedUserCategories = uCats.map((uc) => capitalizeFirstLetter(uc) );
+    }
 
     return (
         <>
+            {formattedUserCategories !== false && <p>Selected categories: {formattedUserCategories.join(', ')} <Button href="/profile" size="small" style={{marginLeft:"10px"}} variant="outlined">Edit</Button></p>}
             <Grid container spacing={2}>
               {articles.isLoading ? <CircularProgress /> :
                 (articles.error !== false 

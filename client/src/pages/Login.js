@@ -82,11 +82,13 @@ const Login = ( { dispatchAuth, gridSize=3, titleSizeH3=false } ) => {
                     // feedback after login
                     sessionStorage.setItem('showLoginSuccessfulOnHome',true); // when login from widget on Home this message was not displayed when set in Login component
                     sessionStorage.setItem('isAuthenticated',true);
-                
+                    
+                    sessionStorage.setItem('userCategories',userData.categories);
+
                     // store user name for display purpose
                     userData = JSON.stringify(userData); // needs to be encoded before sessionStorage
                     sessionStorage.setItem('userData',userData);
-
+                    
                     navigate('/');
 
                 } else {
