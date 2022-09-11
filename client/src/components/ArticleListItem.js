@@ -16,6 +16,13 @@ const ArticleListItem = ({item}) => {
     let headerCategory = capitalizeFirstLetter(item.category);
     let publishedAt = formatArticleDateTime(item.publishedAt);
 
+    const openInNewWindow = (url) => {
+        const win = window.open(url, '_blank');
+        if (win != null) {
+          win.focus();
+        }
+      }
+
     return (
         <Grid item xs={4}>
             <Card variant="outlined">
@@ -37,8 +44,9 @@ const ArticleListItem = ({item}) => {
                     <Typography gutterBottom variant="subtitle2" component="div"><BsCalendarDate /> {publishedAt.date} <BiTime /> {publishedAt.time}</Typography>                
                     <Typography variant="body2" color="text.secondary">{striptags(item.description)}</Typography>
                 </CardContent>
-                <CardActions>
-                    <Button size="small" onClick={() => navigate(`/article/${item.slug}`) }>Continue reading</Button>
+                <CardActions style={{justifyContent: "space-between"}}>
+                    <Button size="small" onClick={() => openInNewWindow(`${item.url}`) }>Read full story (source)</Button>
+                    <Button size="small" onClick={() => navigate(`/article/${item.slug}`) }>View story</Button>
                 </CardActions>
             </Card>
         </Grid>
