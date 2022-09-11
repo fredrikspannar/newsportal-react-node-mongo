@@ -28,10 +28,10 @@ const ArticleListItem = ({item}) => {
                 />
                 <CardMedia
                     component="img"
-                    height="140"
-                    image={item.urlToImage}
-                    alt="green iguana"
-                />        
+                    height="100"
+                    image={item.urlToImage || "/images/broken-image.jpg"}
+                    alt={item.title}
+                /> 
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">{item.title}</Typography>                
                     <Typography gutterBottom variant="subtitle2" component="div"><BsCalendarDate /> {publishedAt.date} <BiTime /> {publishedAt.time}</Typography>                
@@ -39,7 +39,7 @@ const ArticleListItem = ({item}) => {
                 </CardContent>
                 <CardActions>
                     <Button size="small" onClick={() => navigate(`/article/${item.slug}`) }>Continue reading</Button>
-                </CardActions>                
+                </CardActions>
             </Card>
         </Grid>
     );
