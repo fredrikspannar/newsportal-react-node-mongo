@@ -98,5 +98,19 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 });
 
 
+Router.get('/api/articles-by-name/:name', requireAuthorized, (req,res) => {
+    const { name } = req.params;
 
+    // get all from cache and return data
+    articleModel.find( { category : name.toLowerCase() } )
+        .then((result) => {
+
+            res.send(result);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json(error);
+        });
+
+});
 export default Router;

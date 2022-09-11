@@ -1,5 +1,5 @@
 
-import logo from "./404-not-found.jpg";
+import logo from "./images/404-not-found.jpg";
 
 
 const PageNotFound = ()  => (

@@ -10,12 +10,12 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Categories from "./pages/Categories";
 import SingleArticle from "./pages/SingleArticle";
+import SingleCategory from "./pages/SingleCategory";
 import PageNotFound from "./pages/PageNotFound";
 
 import AppNavBar from "./components/AppNavBar";
 
 import { AuthReducer } from "./reducers/AuthReducer";
-
 
 function App() {
   const isAuthenticated = sessionStorage.getItem('isAuthenticated') || false;
@@ -39,6 +39,7 @@ function App() {
           <Route path="/article/:slug" element={<SingleArticle />} />
           
           <Route path="/categories" element={<Categories />} />
+          <Route path="/category/:name" element={<SingleCategory />} />
 
           <Route path="/register" element={<Register dispatchAuth={dispatchAuth} />} />
           <Route path="/login" element={<Login dispatchAuth={dispatchAuth} />} />

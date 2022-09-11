@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 
 import { UserBar } from "./UserBar";
 
-import newsportalLogo from "./newsportal-logo.png";
+import newsportalLogo from "./images/newsportal-logo.png";
 
 const StyledNavLink = styled(NavLink)`
   color: #fff;

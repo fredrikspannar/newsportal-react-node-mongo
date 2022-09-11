@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import splashLogo from "./newsportal.jpg";
+import splashLogo from "./images/newsportal.jpg";
 import Login from "../pages/Login";
 
 const HomeSplash = ({dispatchAuth}) => {
