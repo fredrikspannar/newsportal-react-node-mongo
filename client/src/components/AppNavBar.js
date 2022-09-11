@@ -7,6 +7,8 @@ import { NavLink } from "react-router-dom";
 
 import { UserBar } from "./UserBar";
 
+import newsportalLogo from "./newsportal-logo.png";
+
 const StyledNavLink = styled(NavLink)`
   color: #fff;
   text-decoration:none;
@@ -21,12 +23,18 @@ const AppNavBar = ({user}) => {
       <AppBar position="static">
         <Toolbar>
           <IconButton color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-            <DynamicFeedIcon /> &nbsp; Newsportal
+            <img src={newsportalLogo} alt="" style={{height: "60px", width: "auto"}} />
           </IconButton>
 
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div">
             <NavLink to="/">Home</NavLink>
           </Typography>
+          
+          {isAuthenticated && 
+            <Typography variant="h6" component="div">
+                <NavLink to="/categories">Categories</NavLink>
+            </Typography>
+          }
 
           {isAuthenticated && <UserBar user={user} />}
         </Toolbar>

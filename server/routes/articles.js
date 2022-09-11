@@ -1,9 +1,11 @@
 import express from "express";
 
 import articleModel from "../models/articleModel.js";
+import categoryModel from "../models/categoryModel.js";
 
 import requireAuthorized from "../middleware/requireAuthorized.js";
-import { getArticles } from "../utils/common.js";
+
+import { getArticles, capitalizeFirstLetter } from "../utils/common.js";
 
 const Router = express.Router();
 
@@ -48,6 +50,11 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
                     if ( result !== true ) {
                         throw new Error(result);
+
+                    } else {
+                        let cat = new categoryModel();
+                        cat.name = capitalizeFirstLetter(category);
+                        await cat.save();
                     }
 
                 }) );

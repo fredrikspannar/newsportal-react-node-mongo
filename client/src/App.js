@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
+import Categories from "./pages/Categories";
 import SingleArticle from "./pages/SingleArticle";
 import PageNotFound from "./pages/PageNotFound";
 
@@ -37,6 +38,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/article/:slug" element={<SingleArticle />} />
           
+          <Route path="/categories" element={<Categories />} />
+
           <Route path="/register" element={<Register dispatchAuth={dispatchAuth} />} />
           <Route path="/login" element={<Login dispatchAuth={dispatchAuth} />} />
           <Route path="/logout" element={<Logout />} />

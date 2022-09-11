@@ -29,7 +29,7 @@ const ArticleListItem = ({item}) => {
                 <CardMedia
                     component="img"
                     height="100"
-                    image={item.urlToImage || "/images/broken-image.jpg"}
+                    image={item.urlToImage || "/images/newsportal-logo.jpg"}
                     alt={item.title}
                 /> 
                 <CardContent>
