@@ -12,9 +12,11 @@ app.use(express.json());
 // setup routes
 import authRoute from "./routes/auth.js";
 import articleRoute from "./routes/articles.js";
+import categoryRoute from "./routes/categories.js";
 
 app.use(authRoute);
 app.use(articleRoute);
+app.use(categoryRoute);
 
 
 // default route to 404 not found if no other matches
