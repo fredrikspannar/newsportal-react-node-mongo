@@ -1,6 +1,10 @@
 import { Card, Grid, CardContent, CardMedia, Typography, CardHeader, Avatar, CardActions, Button } from '@mui/material';
 import { useNavigate } from "react-router-dom";
+import striptags from 'striptags';
+
 import getArticleIcon from "../utils/getArticleIcon";
+import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
+import formatArticleDateTime from "../utils/formatArticleDateTime";
 
 import { BsCalendarDate } from "react-icons/bs";
 import { BiTime } from "react-icons/bi";
@@ -9,11 +13,8 @@ const ArticleListItem = ({item}) => {
     const navigate = useNavigate();
 
     let headerIcon = getArticleIcon(item.sourceName);
-    let headerCategory = "";
-
-    let publishedDate = new Date(item.publishedAt);
-    let formattedPublishedAtDate = publishedDate.toLocaleDateString('sv-SE');
-    let formattedPublishedAtTime = publishedDate.getHours() + ':' + publishedDate.getMinutes();
+    let headerCategory = capitalizeFirstLetter(item.category);
+    let publishedAt = formatArticleDateTime(item.publishedAt);
 
     return (
         <Grid item xs={4}>
@@ -33,8 +34,8 @@ const ArticleListItem = ({item}) => {
                 />        
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">{item.title}</Typography>                
-                    <Typography gutterBottom variant="subtitle2" component="div"><BsCalendarDate /> {formattedPublishedAtDate} <BiTime /> {formattedPublishedAtTime}</Typography>                
-                    <Typography variant="body2" color="text.secondary">{item.description}</Typography>
+                    <Typography gutterBottom variant="subtitle2" component="div"><BsCalendarDate /> {publishedAt.date} <BiTime /> {publishedAt.time}</Typography>                
+                    <Typography variant="body2" color="text.secondary">{striptags(item.description)}</Typography>
                 </CardContent>
                 <CardActions>
                     <Button size="small" onClick={() => navigate(`/article/${item.slug}`) }>Continue reading</Button>

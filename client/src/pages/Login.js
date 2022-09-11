@@ -12,7 +12,7 @@ import { TextFieldValidationReducer, TEXTFIELD_SET, TEXTFIELD_ERROR, TEXTFIELD_D
 
 import { AUTH_LOGIN } from "../reducers/AuthReducer";
 
-import MessageHook from "../utils/messageHook.js";
+import MessageHook from "../utils/messageHook";
 
 const SubmitButton = styled(Button)`
     margin-top: 12px;
@@ -137,7 +137,7 @@ const Login = ( { dispatchAuth, gridSize=3, titleSizeH3=false } ) => {
                     <Item><TextField fullWidth type="password" id="password" label="Password" variant="standard" disabled={password.disabled !== false} error={password.error !== false} helperText={password.error !== false ? password.error : ''} onBlur={(e) => handlePasswordInputBlur(e)} /></Item>
                     <Item>{email.disabled !== false && password.disabled !== false 
                         ? <CircularProgress size="1.2rem" style={{ top: "26px", position: "relative" }} />
-                        : <SubmitButton color="success" onClick={handleLogin}>Continue</SubmitButton>
+                        : <><SubmitButton color="success" onClick={handleLogin}>Continue</SubmitButton><p><br />No account? <a href="/register">register</a></p></>
                     }</Item>
                 </Grid>
             </Grid>

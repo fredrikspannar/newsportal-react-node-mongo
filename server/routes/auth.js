@@ -126,9 +126,35 @@ Router.post("/api/register", (req, res) => {
                 // proceed to save user
                 user.save()
                     .then((userCreated) => {
-                        // all done, clear password and return success
-                        userCreated.password = null;
-                        res.status(201).send({"result":"success", "user": userCreated});
+                        let user = userCreated.toJSON();
+                        delete user.password;
+
+                        // create session direct
+                        const token = jwt.sign(user, process.env.SECRET);
+
+                        // save token to mongo
+                        let tokenDB = new tokenModel();
+                        tokenDB.token = token;
+                        tokenDB.userId = user._id;
+        
+                        tokenDB.save()
+                            .then((tokenDBCreated) => {
+                                // all done, login complete
+                                
+                                // set http-only cookie
+                                res.cookie('token', token, {
+                                    httpOnly: true
+                                });
+                            
+                                // all done
+                                res.status(201).send({"result":"success", "user": user});
+
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                res.status(500).json(error);
+                            });
+
                     })
                     .catch((error) => {
                         if ( error.name == "ValidationError") {

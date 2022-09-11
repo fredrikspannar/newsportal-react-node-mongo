@@ -37,7 +37,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/article/:slug" element={<SingleArticle />} />
           
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register dispatchAuth={dispatchAuth} />} />
           <Route path="/login" element={<Login dispatchAuth={dispatchAuth} />} />
           <Route path="/logout" element={<Logout />} />
 
