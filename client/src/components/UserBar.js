@@ -1,9 +1,18 @@
 import FaceIcon from '@mui/icons-material/Face';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import { Button, Menu, MenuItem, IconButton } from '@mui/material';
+import { Button, Menu, MenuItem, IconButton, Paper } from '@mui/material';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { styled } from '@mui/material/styles';
+
+const UserBarStyled = styled(Paper)`
+    background-color: inherit;
+    box-shadow: none;
+    border: 0;
+    color: #fff;
+    margin-left: auto;
+`;
 
 export const UserBar = ({user}) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -29,7 +38,7 @@ export const UserBar = ({user}) => {
     }
 
     return (
-        <>
+        <UserBarStyled>
             <IconButton color="inherit" aria-label="menu" sx={{ mr: 2 }}>
                 <FaceIcon />
             </IconButton>
@@ -40,6 +49,6 @@ export const UserBar = ({user}) => {
                 <MenuItem onClick={() => goToPage('/profile') }>Profile</MenuItem>
                 <MenuItem onClick={() => goToPage('/logout') }>Logout</MenuItem>
             </Menu>            
-        </>
+        </UserBarStyled>
     );
 };

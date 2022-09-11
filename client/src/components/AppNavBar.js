@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { AppBar, Box, Toolbar,Typography, Button, IconButton } from '@mui/material';
+import { AppBar, Box, Toolbar,Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import { NavLink } from "react-router-dom";
 
 import { UserBar } from "./UserBar";
@@ -12,6 +11,8 @@ import newsportalLogo from "./newsportal-logo.png";
 const StyledNavLink = styled(NavLink)`
   color: #fff;
   text-decoration:none;
+  margin-right: 20px;
+  margin-left: 10px;
   &:hover { color:#aaa; }
 `;
 
@@ -27,12 +28,12 @@ const AppNavBar = ({user}) => {
           </IconButton>
 
           <Typography variant="h6" component="div">
-            <NavLink to="/">Home</NavLink>
+            <StyledNavLink to="/">Home</StyledNavLink>
           </Typography>
           
           {isAuthenticated && 
             <Typography variant="h6" component="div">
-                <NavLink to="/categories">Categories</NavLink>
+                <StyledNavLink to="/categories">Categories</StyledNavLink>
             </Typography>
           }
 
