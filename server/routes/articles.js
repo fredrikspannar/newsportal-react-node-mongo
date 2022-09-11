@@ -60,7 +60,7 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
                 }) );
 
                 // get all articles and then return data
-                articleModel.find({})
+                articleModel.find({}).sort({ publishedAt : "desc"})
                     .then((result) => {
                         res.send(result);
                     })
@@ -83,7 +83,7 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
     } else {
 
         // get all from cache and return data
-        articleModel.find({})
+        articleModel.find({}).sort({ publishedAt : "desc"})
             .then((result) => {
                 res.send(result);
             })
@@ -105,7 +105,7 @@ Router.get('/api/articles-by-name/:name', requireAuthorized, (req,res) => {
     let query = { category : name.toLowerCase().replace('+', ',').split(',') };
 
     // get all from cache and return data
-    articleModel.find( query )
+    articleModel.find( query ).sort({ publishedAt : "desc"})
         .then((result) => {
             res.send(result);
         })
