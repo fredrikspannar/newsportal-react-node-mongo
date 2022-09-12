@@ -9,6 +9,25 @@ import { getArticles, capitalizeFirstLetter } from "../utils/common.js";
 
 const Router = express.Router();
 
+/**
+ * @openapi
+ * /api/articles:
+ *   get:
+ *     tags:
+ *       - Articles
+ *     description: Get single article by slug
+ *     parameters:
+ *       - name: slug
+ *         in: query
+ *         required: true
+ *         type: string
+ *         description: slug of article
+ *     responses:
+ *       200:
+ *         description: Returns article
+ *       500:
+ *         description: Internal server error with query
+ */
 Router.get('/api/article/:slug', requireAuthorized, (req,res) => {
     const { slug } = req.params;
 
@@ -28,7 +47,21 @@ Router.get('/api/article/:slug', requireAuthorized, (req,res) => {
 
 });
 
-
+/**
+ * @openapi
+ * /api/articles:
+ *   get:
+ *     tags:
+ *       - Articles
+ *     description: Get all articles. Default (hardcoded categories) are technology, entertainment, business, general
+ *     responses:
+ *       200:
+ *         description: Returns articles
+  *      500 (1):
+ *         description: If enviroment variable "NEWSAPI_URL" is not set for backend, an 500-error will be returned
+ *       500 (2):
+ *         description: Internal server error with query
+ */
 Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
     const numArticles = await articleModel.countDocuments({}).exec();
@@ -97,7 +130,25 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
 });
 
-
+/**
+ * @openapi
+ * /api/articles-by-name:
+ *   get:
+ *     tags:
+ *       - Articles
+ *     description: Get articles by category name
+ *     parameters:
+ *       - name: name
+ *         in: query
+ *         required: true
+ *         type: string
+ *         description: name of category
+ *     responses:
+ *       200:
+ *         description: Returns articles
+ *       500:
+ *         description: Internal server error with query
+ */
 Router.get('/api/articles-by-name/:name', requireAuthorized, (req,res) => {
     const { name } = req.params;
 
@@ -115,4 +166,5 @@ Router.get('/api/articles-by-name/:name', requireAuthorized, (req,res) => {
         });
 
 });
+
 export default Router;

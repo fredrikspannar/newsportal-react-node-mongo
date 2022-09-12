@@ -7,6 +7,34 @@ import authModel from "../models/authModel.js";
 
 const Router = express.Router();
 
+/**
+ * @openapi
+ * /api/profile:
+ *   post:
+ *     tags:
+ *      - Profile
+ *     description: Update profile for user
+ *     parameters:
+ *       - name: firstname
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: firstname of user
+ *       - name: lastname
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: lastname of user
+ *       - name: categories
+ *         in: formdata
+ *         type: [string]
+ *         description: if empty, default will be all categories
+ *     responses:
+ *       200:
+ *         description: Returns result and the updated user
+ *       500:
+ *         description: Internal server error with query 
+ */
 Router.post('/api/profile', requireAuthorized, (req, res) =>{
     const requiredFields = [ "firstname", "lastname"];
     const isValid = hasValidFields(requiredFields, req.body);

@@ -9,7 +9,30 @@ const Router = express.Router();
 import { hasValidFields } from "./../utils/common.js";
 import requireAuthorized from "../middleware/requireAuthorized.js";
 
-
+/**
+ * @openapi
+ * /api/login:
+ *   post:
+ *     tags:
+ *      - Auth
+ *     description: Login a registered user
+ *     parameters:
+ *       - name: email
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: email of user
+ *       - name: password
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: password of user
+ *     responses:
+ *       200:
+ *         description: Returns result and the user with http-only cookie with JWT token
+ *       500:
+ *         description: Internal server error with query 
+ */
 Router.post("/api/login", (req, res) => {
     const requiredFields = [ "email", "password" ];
     const isValid = hasValidFields(requiredFields, req.body);
@@ -67,6 +90,25 @@ Router.post("/api/login", (req, res) => {
 
 });
 
+/**
+ * @openapi
+ * /api/logout:
+ *   post:
+ *     tags:
+ *     - Auth
+ *     description: Logout a user
+ *     parameters:
+ *       - name: token
+ *         in: header
+ *         required: true
+ *         type: string
+ *         description: JWT token
+ *     responses:
+ *       200:
+ *         description: Returns result
+ *       500:
+ *         description: Internal server error with query 
+ */
 Router.post("/api/logout", requireAuthorized, (req, res) => {
 
     // delete token from mongo
@@ -90,6 +132,40 @@ Router.post("/api/logout", requireAuthorized, (req, res) => {
 
 });
 
+/**
+ * @openapi
+ * /api/register:
+ *   post:
+ *     tags:
+ *     - Auth
+ *     description: Register (and login) a user
+ *     parameters:
+  *       - name: firstname
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: firstname of user
+ *       - name: lastname
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: lastname of user
+ *       - name: email
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: email of user
+ *       - name: password
+ *         in: formdata
+ *         required: true
+ *         type: string
+ *         description: password of user
+ *     responses:
+ *       200:
+ *         description: Returns result and the user with http-only cookie with JWT token
+ *       500:
+ *         description: Internal server error with query 
+ */
 Router.post("/api/register", (req, res) => {
     const requiredFields = [ "firstname", "lastname", "email", "password" ];
     const isValid = hasValidFields(requiredFields, req.body);
