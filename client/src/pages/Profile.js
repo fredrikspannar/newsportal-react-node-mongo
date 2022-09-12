@@ -1,9 +1,10 @@
 import React, { useReducer, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 import MessageHook from "../utils/messageHook";
 
 import { 
-    TextField, Grid, Paper,
+    TextField, Grid, Paper, CircularProgress,
     Checkbox, Button, FormGroup, FormControlLabel,
 } from '@mui/material';
 
@@ -27,6 +28,7 @@ const Item = styled(Paper)`
 
 
 const Profile = () => {
+    const navigate = useNavigate();
     const [ message, setMessage ] = MessageHook();
     let userData = sessionStorage.getItem('userData') || false;
 
@@ -45,6 +47,8 @@ const Profile = () => {
     } else {
         userCategories = [];
     }
+
+    const [ isProcessing, setIsProcessing ] = useState(false);
 
     const [ firstname, dispatchFirstname ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: (userData.firstname && userData.firstname !== "" ? userData.firstname : '') });
     const [ lastname, dispatchLastname ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: (userData.lastname && userData.lastname !== "" ? userData.lastname : '') });
@@ -71,7 +75,74 @@ const Profile = () => {
     }
 
     const handleUpdate = () => {
+        if ( firstname.data.length === 0 ) {
+            dispatchFirstname( { type: TEXTFIELD_ERROR, payload: "This field is required!" } );
+            return;
+        } else if ( lastname.data.length === 0 ) {
+            dispatchLastname( { type: TEXTFIELD_ERROR, payload: "This field is required!" } );
+            return;
+        }
 
+        const postData = {
+            firstname: firstname.data,
+            lastname: lastname.data,
+            categories: []
+        }
+
+        if (categoryGeneralIsChecked) postData.categories.push('general');
+        if (categoryBusinessIsChecked) postData.categories.push('business');
+        if (categoryTechnologyIsChecked) postData.categories.push('technology');
+        if (categoryEntertainmentIsChecked) postData.categories.push('entertainment');
+
+        setIsProcessing(true);
+
+
+        fetch('/api/profile', { 
+            method: "post",
+            headers: [ ["Content-Type", "application/json"] ],
+            credentials: "include",
+            body: JSON.stringify(postData) }
+        )
+        .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, statusText: r.statusText, body: data})) ) // package status and json body into return result
+        .then((data) => {
+
+            if ( !data.ok && data.body.result === "error" && data.body.message ) {
+                // error from backend
+                setMessage({type:"error", content:data.body.message});
+
+            } else if ( data.ok && data.status === 200 && data.body.user ) {
+
+                // update successful
+                let userData = data.body.user;
+                delete userData.__v;
+                delete userData._id;
+                delete userData.createdAt;
+                delete userData.email;
+
+                sessionStorage.setItem('userCategories',userData.categories);
+
+                // store user name for display purpose
+                delete userData.categories;
+                userData = JSON.stringify(userData); // needs to be encoded before sessionStorage
+                sessionStorage.setItem('userData',userData);
+
+
+                // feedback
+                setIsProcessing(false);
+                setMessage({type:"success", content:"Your profile has been updated"});
+
+                navigate('/');
+                
+            } else {
+                // general error
+                throw new Error(`Failed to login! ${data.status} ${data.statusText}`);
+            }
+
+        })
+        .catch((error) => {
+            setMessage({type:"error", content:error.message});
+            
+        });  
 
     }
 
@@ -99,7 +170,10 @@ const Profile = () => {
                         </FormGroup>                        
                     </Grid>
                     <Grid item xs={12}>
-                        <SubmitButton color="success" onClick={handleUpdate}>Save</SubmitButton>
+                        { isProcessing 
+                            ? <CircularProgress size="1.2rem" />
+                            : <SubmitButton color="success" onClick={handleUpdate}>Save</SubmitButton>
+                        }
                     </Grid>
                 </Grid>
             }

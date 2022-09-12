@@ -19,11 +19,21 @@ Router.post('/api/profile', requireAuthorized, (req, res) =>{
     // get parameters
     const { firstname, lastname, categories } = req.body;
 
-console.log(req.user);
 
-    
+    authModel.findOneAndUpdate({ _id: req.user._id }, { firstname:firstname, lastname:lastname, categories:categories})
+        .then((userUpdated) => {
 
-    res.send({});
+            // get first result and convert to JSON
+            let user = userUpdated.toJSON();
+            delete user.password;
+
+            res.send({'result':'ok', 'user':user});
+
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json(error);
+        });
 
 });
 

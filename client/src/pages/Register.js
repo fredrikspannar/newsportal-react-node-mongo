@@ -102,6 +102,7 @@ const Register = ({dispatchAuth}) => {
                     sessionStorage.setItem('userCategories',userData.categories);
                     
                     // store user name for display purpose
+                    delete userData.categories;
                     userData = JSON.stringify(userData); // needs to be encoded before sessionStorage
                     sessionStorage.setItem('userData',userData);
 

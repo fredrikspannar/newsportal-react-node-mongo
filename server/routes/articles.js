@@ -115,5 +115,4 @@ Router.get('/api/articles-by-name/:name', requireAuthorized, (req,res) => {
         });
 
 });
-
 export default Router;

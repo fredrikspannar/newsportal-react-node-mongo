@@ -13,11 +13,12 @@ app.use(express.json());
 import authRoute from "./routes/auth.js";
 import articleRoute from "./routes/articles.js";
 import categoryRoute from "./routes/categories.js";
+import profileRoute from "./routes/profile.js";
 
 app.use(authRoute);
 app.use(articleRoute);
 app.use(categoryRoute);
-
+app.use(profileRoute);
 
 // default route to 404 not found if no other matches
 app.use((req, res) => {
