@@ -5,6 +5,12 @@ import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -16,6 +22,30 @@ app.use(compression());
 app.use(cookieParser());
 
 app.use(express.json());
+
+// firefox may block loading of needed scripts because
+// of 'Content-Security-Policy'
+//
+// THIS IS ONLY NEEDED IF YOU RUN ON A NON-HTTPS ENVIROMENT/SERVER
+app.use(function (req, res, next) {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; font-src 'self'; img-src 'self' data: validator.swagger.io; script-src 'self' https: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-src 'self'"
+  );
+  next();
+});
+
+// serve compiled frontend react if enviroment is production
+if ( process.env.NODE_ENV === 'production' ) {
+  const clientDir = path.join(__dirname, '/../client/build');
+
+  if (fs.existsSync(clientDir)) {
+    app.use(express.static(clientDir));
+  } else {
+    throw new Error("Enviroment is set to production but no production of frontend has been built.");
+  }
+
+}
 
 // setup routes
 import authRoute from "./routes/auth.js";
@@ -32,13 +62,13 @@ app.use(profileRoute);
 if ( process.env.NODE_ENV === 'development' ) {
     // firefox may block loading of needed scripts because
     // of 'Content-Security-Policy'
-    app.use(function (req, res, next) {
+    /*app.use(function (req, res, next) {
         res.setHeader(
           'Content-Security-Policy',
           "default-src 'self'; font-src 'self'; img-src 'self' data: validator.swagger.io; script-src 'self' https: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-src 'self'"
         );
         next();
-      });
+      });*/
 
     const swaggerOptions = {
         definition: {
