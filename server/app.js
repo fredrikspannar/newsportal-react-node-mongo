@@ -11,7 +11,7 @@ dotenv.config();
 // setup app and middleware
 const app = express();
 
-//app.use(helmet());
+app.use(helmet());
 app.use(compression());    
 app.use(cookieParser());
 
