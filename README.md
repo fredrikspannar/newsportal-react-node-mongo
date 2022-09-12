@@ -1,7 +1,9 @@
 # react-node-auth-demo
 
 Frontend - React with Material UI
+
 Backend - Node/Express
+
 Persistent storage - MongoDB
 
 ## Documentation (Backend API)
@@ -91,5 +93,7 @@ will be served from the same URI.
 
 ## Final thoughts and improvements
 
-Caching of the news from newsapi.org should be checked and new data fetched if the cached data is old, perhaps
+* Caching of the news from newsapi.org should be checked and new data fetched if the cached data is old, perhaps
 check and update once every three hours.
+
+* Fix the bug when you're saving the profile you might need to save twice for the new settings to be set.
