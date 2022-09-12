@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 
 import MessageHook from "../utils/messageHook";
 
@@ -7,7 +7,7 @@ import {
     Checkbox, Button, FormGroup, FormControlLabel,
 } from '@mui/material';
 
-import { TextFieldValidationReducer, TEXTFIELD_SET, TEXTFIELD_ERROR, TEXTFIELD_DISABLED, TEXTFIELD_RESET } from "../reducers/TextFieldValidationReducer";
+import { TextFieldValidationReducer, TEXTFIELD_SET, TEXTFIELD_ERROR } from "../reducers/TextFieldValidationReducer";
 
 import { styled } from '@mui/material/styles';
 
@@ -48,6 +48,11 @@ const Profile = () => {
 
     const [ firstname, dispatchFirstname ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: (userData.firstname && userData.firstname !== "" ? userData.firstname : '') });
     const [ lastname, dispatchLastname ] = useReducer(TextFieldValidationReducer, { error: false, disabled: false, data: (userData.lastname && userData.lastname !== "" ? userData.lastname : '') });
+    
+    const [ categoryGeneralIsChecked, setCategoryGeneralIsChecked ] = useState(userCategories.includes('general') ? true : false);
+    const [ categoryBusinessIsChecked, setCategoryBusinessIsChecked ] = useState(userCategories.includes('business') ? true : false);
+    const [ categoryTechnologyIsChecked, setCategoryTechnologyIsChecked ] = useState(userCategories.includes('technology') ? true : false);
+    const [ categoryEntertainmentIsChecked, setCategoryEntertainmentIsChecked ] = useState(userCategories.includes('entertainment') ? true : false);
 
     const handleFirstnameInputBlur = (e) => {
         if ( e.target.value.toString().length === 0 ) {
@@ -70,8 +75,6 @@ const Profile = () => {
 
     }
 
-console.log(userCategories);
-
     return (
         <>
              <h1>Profile</h1>
@@ -87,12 +90,12 @@ console.log(userCategories);
                     <Grid item xs={6}>
                         <h4>Selected categories:</h4>
                         <FormGroup row>
-                            <FormControlLabel control={<Checkbox id="general" />} label="General" style={{ width: "140px"}} />
-                            <FormControlLabel control={<Checkbox id="business" />} label="Business" />
+                            <FormControlLabel control={<Checkbox id="general" checked={categoryGeneralIsChecked} onChange={() => setCategoryGeneralIsChecked(!categoryGeneralIsChecked) } />}  label="General" style={{ width: "140px"}} />
+                            <FormControlLabel control={<Checkbox id="business" checked={categoryBusinessIsChecked} onChange={() => setCategoryBusinessIsChecked(!categoryBusinessIsChecked) } />}  label="Business" />
                         </FormGroup>
                         <FormGroup row>
-                            <FormControlLabel control={<Checkbox id="technology" />} label="Technology"  style={{ width: "140px"}} />
-                            <FormControlLabel control={<Checkbox id="entertainment" />} label="Entertainment" />
+                            <FormControlLabel control={<Checkbox id="technology" checked={categoryTechnologyIsChecked} onChange={() => setCategoryTechnologyIsChecked(!categoryTechnologyIsChecked) } />} label="Technology"  style={{ width: "140px"}} />
+                            <FormControlLabel control={<Checkbox id="entertainment" checked={categoryEntertainmentIsChecked} onChange={() => setCategoryEntertainmentIsChecked(!categoryEntertainmentIsChecked) } />} label="Entertainment" />
                         </FormGroup>                        
                     </Grid>
                     <Grid item xs={12}>
@@ -100,7 +103,6 @@ console.log(userCategories);
                     </Grid>
                 </Grid>
             }
-
 
              {message !== false && message}
         </>
