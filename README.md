@@ -43,20 +43,6 @@ SWAGGER_API_VERSION=1.0
 Replace the placeholder "DATABASE" in NODE_MONGODB with the name of the database, also you need a free api-key from https://newsapi.org
 for the variable NEWSAPI_URL and the placeholder "APIKEY"
 
-## NON-HTTPS NOTE
-
-If you're using firefox and no HTTPS you may need to set this middleware i server/app.js for all requests:
-
-```
-app.use(function (req, res, next) {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; font-src 'self'; img-src 'self' data: validator.swagger.io; script-src 'self' https: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-src 'self'"
-  );
-  next();
-});
-```
-
 ## Development
 
 Start backend with:
