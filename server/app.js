@@ -35,10 +35,11 @@ if ( process.env.NODE_ENV === 'production' ) {
 
   // serve static react index if not route /api
   app.use((req, res, next) => {
-    if ( req.baseUrl.includes('/api') ) {
+    const isAPI_Request = req.baseUrl.includes('/api') || req.originalUrl.includes('/api') ? true : false;
+    if ( isAPI_Request ) {
       // process api
       next();
-      
+
     } else {
       // send react index.html
       res.sendFile(
