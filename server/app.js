@@ -33,6 +33,20 @@ if ( process.env.NODE_ENV === 'production' ) {
     throw new Error("Enviroment is set to production but no production of frontend has been built.");
   }
 
+  // serve static react index if not route /api
+  app.use((req, res, next) => {
+    if ( req.baseUrl.includes('/api') ) {
+      // process api
+      next();
+      
+    } else {
+      // send react index.html
+      res.sendFile(
+        path.join(clientDir, "/index.html")
+      );
+    }
+
+  });
 }
 
 // setup routes
