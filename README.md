@@ -91,9 +91,39 @@ Depending on the production enviroment you might want to set the enviroment-vari
 Everything is setup to start the Node/Express server with a "npm start"-command and the frontend + backend
 will be served from the same URI.
 
+## Deployment
+
+The application can be served with Node/Express directly ( React frontend and API backend ), but you
+can also serve with a Nginx frontend to levereage Nginx caching features ( and also load balance if you're
+running multiple Node instances. Nginx can direct the load better to workers then Node master/nodes )
+
+Nginx configuration for serving react and proxy to node:
+
+```
+  # set root to match the directory where the react frontend is
+  root /var/www/.../client/build;
+
+  location / {
+    try_files $uri $uri/ /index.html =404;
+  }
+
+  location /api {
+    proxy_pass http://localhost:3010;          # whatever port node runs on
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+```
+
 ## Final thoughts and improvements
 
 * Caching of the news from newsapi.org should be checked and new data fetched if the cached data is old, perhaps
 check and update once every three hours.
 
 * Fix the bug when you're saving the profile you might need to save twice for the new settings to be set.
+
+* Add CSRF-protection since httpony-cookies is vulnerable to Cross site request forgery.
+
+* More explicit validation in backend and not the simple validation with only does not exit (..then fail).
