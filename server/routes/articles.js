@@ -9,6 +9,9 @@ import { getArticles, capitalizeFirstLetter } from "../utils/common.js";
 
 const Router = express.Router();
 
+// this should be set in .env or seeded in the database
+const categories = ['technology', 'entertainment', 'business', 'general'];
+
 /**
  * @openapi
  * /api/articles:
@@ -57,9 +60,9 @@ Router.get('/api/article/:slug', requireAuthorized, (req,res) => {
  *     responses:
  *       200:
  *         description: Returns articles
-  *      500 (1):
- *         description: If enviroment variable "NEWSAPI_URL" is not set for backend, an 500-error will be returned
- *       500 (2):
+ *       204:
+ *         description: Failed to fetch articles from newsapi.org
+ *       500:
  *         description: Internal server error with query
  */
 Router.get('/api/articles', requireAuthorized, async(req,res) => {
@@ -72,27 +75,14 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
         const url = process.env.NEWSAPI_URL || false;
         
         if ( url ) {
-            const categories = ['technology', 'entertainment', 'business', 'general'];
+            const cacheResult = await getArticles(url, categories);
 
-            try {
+            if ( cacheResult !== true ) {
+                // failed to fetch from the api
+                res.status(204).json({"result":"error", "message": cacheResult.message ? cacheResult.message : 'Failed to fetch articles from newsapi.org'});
 
-                // query for each category
-                // use Promise.all to wait for all categories to be fetched
-                await Promise.all( categories.map(async (category) => {
-                    const result = await getArticles( url.replace('CATEGORY', category), category );
-
-                    if ( result !== true ) {
-                        throw new Error(result);
-
-                    } else {
-                        let cat = new categoryModel();
-                        cat.name = capitalizeFirstLetter(category);
-                        await cat.save();
-                    }
-
-                }) );
-
-                // get all articles and then return data
+            } else {
+                // get all from cache and return data
                 articleModel.find({}).sort({ publishedAt : "desc"})
                     .then((result) => {
                         res.send(result);
@@ -101,12 +91,6 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
                         console.log(error);
                         res.status(500).json(error);
                     });
-
-            } catch(error)     {
-
-                // failed to fetch from API
-                res.status(error.code).json({'result':error.result, 'message': error.message});
-                return;
             }
 
         } else {
@@ -127,7 +111,6 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
 
     }
    
-
 });
 
 /**
@@ -146,25 +129,59 @@ Router.get('/api/articles', requireAuthorized, async(req,res) => {
  *     responses:
  *       200:
  *         description: Returns articles
+ *       204:
+ *         description: Failed to fetch articles from newsapi.org
  *       500:
  *         description: Internal server error with query
  */
-Router.get('/api/articles-by-name/:name', requireAuthorized, (req,res) => {
+Router.get('/api/articles-by-name/:name', requireAuthorized, async (req,res) => {
     const { name } = req.params;
 
     // name can be comma-separated list ( sent with + as replacement for , )
     let query = { category : name.toLowerCase().replace('+', ',').split(',') };
 
-    // get all from cache and return data
-    articleModel.find( query ).sort({ publishedAt : "desc"})
-        .then((result) => {
-            res.send(result);
-        })
-        .catch((error) => {
-            console.log(error);
-            res.status(500).json(error);
-        });
+    const numArticles = await articleModel.countDocuments({}).exec();
 
+    if ( numArticles == 0 ) {
+        // cache from NewsAPI
+        
+        const url = process.env.NEWSAPI_URL || false;
+        
+        if ( url ) {
+            const cacheResult = await getArticles(url, categories);
+
+            if ( cacheResult !== true ) {
+                // failed to fetch from the api
+                res.status(204).json({"result":"error", "message": cacheResult.message ? cacheResult.message : 'Failed to fetch articles from newsapi.org'});
+
+            } else {
+                // get from cache by category and return data
+                articleModel.find( query ).sort({ publishedAt : "desc"})
+                    .then((result) => {
+                        res.send(result);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        res.status(500).json(error);
+                    });
+            }
+
+        } else {
+            res.status(500).json({"result":"error", "message":"enviroment NEWSAPI_URL is not set, failed to get articles"});
+        } 
+
+    } else {
+
+        // get from cache by category and return data
+        articleModel.find( query ).sort({ publishedAt : "desc"})
+            .then((result) => {
+                res.send(result);
+            })
+            .catch((error) => {
+                console.log(error);
+                res.status(500).json(error);
+            });
+    }
 });
 
 export default Router;

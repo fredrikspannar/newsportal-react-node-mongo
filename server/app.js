@@ -23,18 +23,6 @@ app.use(cookieParser());
 
 app.use(express.json());
 
-// firefox may block loading of needed scripts because
-// of 'Content-Security-Policy'
-//
-// THIS IS ONLY NEEDED IF YOU RUN ON A NON-HTTPS ENVIROMENT/SERVER
-app.use(function (req, res, next) {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; font-src 'self'; img-src 'self' data: validator.swagger.io; script-src 'self' https: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-src 'self'"
-  );
-  next();
-});
-
 // serve compiled frontend react if enviroment is production
 if ( process.env.NODE_ENV === 'production' ) {
   const clientDir = path.join(__dirname, '/../client/build');
@@ -62,13 +50,13 @@ app.use(profileRoute);
 if ( process.env.NODE_ENV === 'development' ) {
     // firefox may block loading of needed scripts because
     // of 'Content-Security-Policy'
-    /*app.use(function (req, res, next) {
+    app.use(function (req, res, next) {
         res.setHeader(
           'Content-Security-Policy',
           "default-src 'self'; font-src 'self'; img-src 'self' data: validator.swagger.io; script-src 'self' https: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-src 'self'"
         );
         next();
-      });*/
+      });
 
     const swaggerOptions = {
         definition: {

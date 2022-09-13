@@ -1,4 +1,6 @@
 import articleModel from "../models/articleModel.js";
+import categoryModel from "../models/categoryModel.js";
+
 import fetch from 'node-fetch';
 import slugify  from "slugify";
 
@@ -15,7 +17,7 @@ export const capitalizeFirstLetter = (string)  => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-export const getArticles = async (url, category) => {
+const getCategoryArticles = async (url, category) => {
 
     return await fetch(url)
         .then((response) => response.json())
@@ -73,4 +75,33 @@ export const getArticles = async (url, category) => {
 
         });
 
+}
+
+export const getArticles = async (url, categories) => {
+
+    try {
+
+        // query for each category
+        // use Promise.all to wait for all categories to be fetched
+        await Promise.all( categories.map(async (category) => {
+            const result = await getCategoryArticles( url.replace('CATEGORY', category), category );
+
+            if ( result !== true ) {
+                throw new Error(result);
+
+            } else {
+                let cat = new categoryModel();
+                cat.name = capitalizeFirstLetter(category);
+                await cat.save();
+            }
+
+        }) );
+
+    } catch(error)     {
+
+        // failed to fetch from API
+        return error;
+    }
+
+    return true;
 }
